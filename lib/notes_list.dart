@@ -159,67 +159,69 @@ class _NotesListState extends State<NotesList> {
             child: ListView.builder(
               itemCount: notes.length,
               itemBuilder: (context, index) {
-                return ListTile(
-                  title: Text(notes[index]['title']),
-                  subtitle: Text(notes[index]['description']),
-                  trailing: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      IconButton(
-                        onPressed: () {
-                          _showForm(notes[index]['id']);
-                        },
-                        icon: const Icon(Icons.edit),
-                      ),
-                      IconButton(
-                        onPressed: () async {
-                          // confirmation dialog
-                          showDialog(
-                            context: context,
-                            builder: (_) => AlertDialog(
-                              title: Row(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  Icon(Icons.warning_amber_rounded),
-                                  SizedBox(width: 10),
-                                  Text('Delete This Note?')
+                return Card(
+                  child: ListTile(
+                    title: Text(notes[index]['title']),
+                    subtitle: Text(notes[index]['description']),
+                    trailing: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        IconButton(
+                          onPressed: () {
+                            _showForm(notes[index]['id']);
+                          },
+                          icon: const Icon(Icons.edit),
+                        ),
+                        IconButton(
+                          onPressed: () async {
+                            // confirmation dialog
+                            showDialog(
+                              context: context,
+                              builder: (_) => AlertDialog(
+                                title: Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Icon(Icons.warning_amber_rounded),
+                                    SizedBox(width: 10),
+                                    Text('Delete This Note?')
+                                  ],
+                                ),
+                                content: const Text(
+                                    'This will delete the note permanently!'),
+                                actions: [
+                                  TextButton(
+                                    onPressed: () {
+                                      Navigator.pop(context, false);
+                                    },
+                                    child: const Text('Cancel'),
+                                  ),
+                                  TextButton(
+                                    onPressed: () async {
+                                      await DB_Controller.deleteNote(
+                                        notes[index]['id'],
+                                      );
+                                      if(mounted){
+                
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content: Text('Note Deleted'),
+                              ),
+                            );
+                            }
+                                      _refreshList();
+                                      Navigator.pop(context, true);
+                                    },
+                                    child: const Text('Delete'),
+                                  ),
                                 ],
                               ),
-                              content: const Text(
-                                  'This will delete the note permanently!'),
-                              actions: [
-                                TextButton(
-                                  onPressed: () {
-                                    Navigator.pop(context, false);
-                                  },
-                                  child: const Text('Cancel'),
-                                ),
-                                TextButton(
-                                  onPressed: () async {
-                                    await DB_Controller.deleteNote(
-                                      notes[index]['id'],
-                                    );
-                                    if(mounted){
-
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                              content: Text('Note Created'),
-                            ),
-                          );
-                          }
-                                    _refreshList();
-                                    Navigator.pop(context, true);
-                                  },
-                                  child: const Text('Delete'),
-                                ),
-                              ],
-                            ),
-                          );
-                          _refreshList();
-                        },
-                        icon: const Icon(Icons.delete),
-                      ),
-                    ],
+                            );
+                            _refreshList();
+                          },
+                          icon: const Icon(Icons.delete),
+                        ),
+                      ],
+                    ),
                   ),
                 );
               },
